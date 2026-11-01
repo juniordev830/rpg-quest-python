@@ -32,6 +32,9 @@ class Character:
 
 def battle(hero: Character, monster: Character) -> str:
     """Run up to ten combat rounds and return a winner or 'Draw'."""
+    if not hero.is_alive() or not monster.is_alive():
+        raise ValueError("Both combatants must be alive when a battle starts.")
+
     print(f"⚔️ Battle started: {hero.name} vs {monster.name}")
     rounds = 0
 
