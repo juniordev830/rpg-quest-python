@@ -14,7 +14,7 @@ class CharacterTests(unittest.TestCase):
             Character("Hero", 10, -1, 0)
 
     def test_damage_is_at_least_one_and_health_never_goes_below_zero(self):
-        hero = Character("Hero", 10, 1, 100)
+        hero = Character("Hero", 10, 1, 0)
 
         self.assertEqual(hero.take_damage(0), 1)
         self.assertEqual(hero.hp, 9)
