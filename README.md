@@ -5,12 +5,14 @@ Protótipo de combate por turnos em Python, criado para praticar orientação a 
 ## Funcionalidades atuais
 
 - Personagens com vida, ataque e defesa.
-- Redução de dano conforme a defesa.
+- Validação de atributos básicos dos personagens.
+- Redução de dano conforme a defesa, com dano mínimo de um ponto.
 - Combate em rodadas com valores aleatórios de dano.
-- Limite de rodadas para encerrar o combate.
-- Exibição do resultado no terminal.
+- Limite de dez rodadas; se ambos continuarem vivos, o resultado é `Draw`.
+- Exibição do combate e do resultado no terminal.
+- Testes automatizados para atributos, dano, vitória, combate inválido e empate por limite de rodadas.
 
-O README descreve somente o comportamento implementado em `main.py`; inventário, equipamentos, progressão de experiência e outras mecânicas podem ser adicionados em etapas futuras.
+O README descreve somente o comportamento implementado em `main.py`; inventário, equipamentos e progressão de experiência ainda não fazem parte do protótipo.
 
 ## Requisitos
 
@@ -23,22 +25,29 @@ O README descreve somente o comportamento implementado em `main.py`; inventário
 python main.py
 ```
 
+## Testes
+
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## Estrutura
 
 ```text
 .
 ├── main.py
-├── .gitignore
-└── README.md
+├── tests/
+│   └── test_main.py
+├── README.md
+└── VSCODE_SETUP.md
 ```
 
 ## Próximas melhorias
 
 - Separar regras de combate e interface de terminal.
-- Corrigir o tratamento do resultado quando o combate termina por limite de rodadas.
-- Testes automatizados cobrem validação de atributos, dano, vitória e empate.
 - Permitir escolher personagem e inimigo sem editar o código.
-- Adicionar configurações para tornar as rodadas reproduzíveis nos testes.
+- Adicionar uma fonte de aleatoriedade injetável para facilitar simulações reproduzíveis.
+- Ampliar a validação de tipos dos atributos de entrada.
 
 ## Objetivo de aprendizagem
 
