@@ -22,6 +22,17 @@ class CharacterTests(unittest.TestCase):
         self.assertEqual(hero.hp, 0)
         self.assertFalse(hero.is_alive())
 
+    def test_battle_rejects_combatants_that_are_already_defeated(self):
+        hero = Character("Hero", 10, 1, 0)
+        monster = Character("Monster", 10, 1, 0)
+        hero.take_damage(100)
+
+        with self.assertRaises(ValueError):
+            battle(hero, monster)
+
+        with self.assertRaises(ValueError):
+            battle(monster, hero)
+
     def test_battle_returns_winner_when_monster_is_defeated(self):
         hero = Character("Hero", 100, 100, 10)
         monster = Character("Monster", 10, 1, 0)
