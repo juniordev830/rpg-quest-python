@@ -18,7 +18,7 @@ class CharacterTests(unittest.TestCase):
 
         self.assertEqual(hero.take_damage(0), 1)
         self.assertEqual(hero.hp, 9)
-        self.assertEqual(hero.take_damage(100), 100)
+        self.assertEqual(hero.take_damage(100), 9)
         self.assertEqual(hero.hp, 0)
         self.assertFalse(hero.is_alive())
 
