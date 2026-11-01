@@ -1,76 +1,45 @@
 # RPG Quest Python
 
-A turn-based RPG engine and dungeon battle system built with Python.
+Protótipo de combate por turnos em Python, criado para praticar orientação a objetos, estado de personagens e cálculo de dano.
 
-## ⚔️ Game Features
+## Funcionalidades atuais
 
-- **Character Stats**: Health, Attack, Defense, and XP progression.
-- **Turn-based Combat Engine**: Damage calculations and critical strikes.
-- **Inventory & Loot**: Items, potions, and equipment.
+- Personagens com vida, ataque e defesa.
+- Redução de dano conforme a defesa.
+- Combate em rodadas com valores aleatórios de dano.
+- Limite de rodadas para encerrar o combate.
+- Exibição do resultado no terminal.
 
-## 🚀 How to Run
+O README descreve somente o comportamento implementado em `main.py`; inventário, equipamentos, progressão de experiência e outras mecânicas podem ser adicionados em etapas futuras.
+
+## Requisitos
+
+- Python 3.10+ recomendado
+- Nenhuma dependência externa para a versão atual
+
+## Executar
 
 ```bash
 python main.py
 ```
 
-## 📜 License
-MIT
-
----
-
-# Código-fonte completo do projeto
-
-
-## Arquivo: `.gitignore`
+## Estrutura
 
 ```text
-__pycache__/
-*.pyc
-venv/
-.DS_Store
+.
+├── main.py
+├── .gitignore
+└── README.md
 ```
 
-## Arquivo: `main.py`
+## Próximas melhorias
 
-```text
-import random
+- Separar regras de combate e interface de terminal.
+- Corrigir o tratamento do resultado quando o combate termina por limite de rodadas.
+- Adicionar testes para dano, morte, vitória e empate.
+- Permitir escolher personagem e inimigo sem editar o código.
+- Adicionar configurações para tornar as rodadas reproduzíveis nos testes.
 
-class Character:
-    def __init__(self, name: str, hp: int, attack: int, defense: int):
-        self.name = name
-        self.max_hp = hp
-        self.hp = hp
-        self.attack = attack
-        self.defense = defense
+## Objetivo de aprendizagem
 
-    def is_alive(self) -> bool:
-        return self.hp > 0
-
-    def take_damage(self, dmg: int) -> int:
-        effective_dmg = max(1, dmg - self.defense)
-        self.hp = max(0, self.hp - effective_dmg)
-        return effective_dmg
-
-def battle(hero: Character, monster: Character) -> str:
-    print(f"⚔️ Battle started: {hero.name} vs {monster.name}")
-    rounds = 0
-    while hero.is_alive() and monster.is_alive() and rounds < 10:
-        rounds += 1
-        dmg = hero.attack + random.randint(1, 5)
-        took = monster.take_damage(dmg)
-        print(f"Round {rounds}: {hero.name} deals {took} damage to {monster.name} (Monster HP: {monster.hp})")
-
-        if monster.is_alive():
-            m_dmg = monster.attack + random.randint(1, 3)
-            m_took = hero.take_damage(m_dmg)
-            print(f"Round {rounds}: {monster.name} deals {m_took} damage to {hero.name} (Hero HP: {hero.hp})")
-
-    return hero.name if hero.is_alive() else monster.name
-
-if __name__ == "__main__":
-    hero = Character("Knight Arthur", hp=100, attack=18, defense=5)
-    goblin = Character("Goblin Berserker", hp=40, attack=12, defense=2)
-    winner = battle(hero, goblin)
-    print(f"🏆 Winner: {winner}")
-```
+O projeto é um exercício incremental de Python. A prioridade é manter regras simples, testar os casos extremos e documentar cada funcionalidade conforme for implementada.
