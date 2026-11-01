@@ -26,8 +26,9 @@ class Character:
             raise ValueError("Damage cannot be negative.")
 
         effective_dmg = max(1, dmg - self.defense)
-        self.hp = max(0, self.hp - effective_dmg)
-        return effective_dmg
+        actual_dmg = min(self.hp, effective_dmg)
+        self.hp -= actual_dmg
+        return actual_dmg
 
 
 def battle(hero: Character, monster: Character) -> str:
