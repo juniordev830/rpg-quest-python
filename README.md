@@ -36,7 +36,7 @@ python main.py
 
 - Separar regras de combate e interface de terminal.
 - Corrigir o tratamento do resultado quando o combate termina por limite de rodadas.
-- Adicionar testes para dano, morte, vitória e empate.
+- Testes automatizados cobrem validação de atributos, dano, vitória e empate.
 - Permitir escolher personagem e inimigo sem editar o código.
 - Adicionar configurações para tornar as rodadas reproduzíveis nos testes.
 
