@@ -7,6 +7,9 @@ class Character:
     def __init__(self, name: str, hp: int, attack: int, defense: int):
         if not isinstance(name, str) or not name.strip():
             raise ValueError("Character name cannot be empty.")
+        for attribute, value in (("hp", hp), ("attack", attack), ("defense", defense)):
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise TypeError(f"{attribute} must be an integer.")
         if hp <= 0:
             raise ValueError("Maximum health must be greater than zero.")
         if attack < 0 or defense < 0:
@@ -22,6 +25,8 @@ class Character:
         return self.hp > 0
 
     def take_damage(self, dmg: int) -> int:
+        if isinstance(dmg, bool) or not isinstance(dmg, int):
+            raise TypeError("Damage must be an integer.")
         if dmg < 0:
             raise ValueError("Damage cannot be negative.")
 
