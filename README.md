@@ -10,6 +10,8 @@ Protótipo de combate por turnos em Python, criado para praticar orientação a 
 - Combate em rodadas com valores aleatórios de dano.
 - Limite de dez rodadas; se ambos continuarem vivos, o resultado é `Draw`.
 - Exibição do combate e do resultado no terminal.
+- Escolha do nome do herói e de um entre três inimigos pela linha de comando.
+- Semente opcional para reproduzir uma batalha com os mesmos valores aleatórios.
 - Testes automatizados para atributos, dano, vitória, combate inválido e empate por limite de rodadas.
 
 O README descreve somente o comportamento implementado em `main.py`; inventário, equipamentos e progressão de experiência ainda não fazem parte do protótipo.
@@ -23,7 +25,10 @@ O README descreve somente o comportamento implementado em `main.py`; inventário
 
 ```bash
 python main.py
+python main.py --hero-name João --enemy orc --seed 42
 ```
+
+As opções de inimigo são `goblin`, `orc` e `spider`. Use a mesma semente para reproduzir a sequência de dano.
 
 ## Testes
 
@@ -45,8 +50,6 @@ python -m unittest discover -s tests -v
 ## Próximas melhorias
 
 - Separar regras de combate e interface de terminal.
-- Permitir escolher personagem e inimigo sem editar o código.
-- Adicionar uma fonte de aleatoriedade injetável para facilitar simulações reproduzíveis.
 - Ampliar a validação de tipos dos atributos de entrada.
 
 ## Objetivo de aprendizagem
