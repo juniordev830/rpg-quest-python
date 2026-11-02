@@ -1,3 +1,4 @@
+import argparse
 import random
 
 
@@ -36,17 +37,18 @@ class Character:
         return actual_dmg
 
 
-def battle(hero: Character, monster: Character) -> str:
+def battle(hero: Character, monster: Character, rng=None) -> str:
     """Run up to ten combat rounds and return a winner or 'Draw'."""
     if not hero.is_alive() or not monster.is_alive():
         raise ValueError("Both combatants must be alive when a battle starts.")
 
+    rng = random if rng is None else rng
     print(f"⚔️ Battle started: {hero.name} vs {monster.name}")
     rounds = 0
 
     while hero.is_alive() and monster.is_alive() and rounds < 10:
         rounds += 1
-        damage = hero.attack + random.randint(1, 5)
+        damage = hero.attack + rng.randint(1, 5)
         dealt = monster.take_damage(damage)
         print(
             f"Round {rounds}: {hero.name} deals {dealt} damage to "
@@ -54,7 +56,7 @@ def battle(hero: Character, monster: Character) -> str:
         )
 
         if monster.is_alive():
-            monster_damage = monster.attack + random.randint(1, 3)
+            monster_damage = monster.attack + rng.randint(1, 3)
             received = hero.take_damage(monster_damage)
             print(
                 f"Round {rounds}: {monster.name} deals {received} damage to "
@@ -66,8 +68,26 @@ def battle(hero: Character, monster: Character) -> str:
     return hero.name if hero.is_alive() else monster.name
 
 
-if __name__ == "__main__":
-    hero = Character("Knight Arthur", hp=100, attack=18, defense=5)
-    goblin = Character("Goblin Berserker", hp=40, attack=12, defense=2)
-    winner = battle(hero, goblin)
+def main():
+    parser = argparse.ArgumentParser(description="Simulate a turn-based RPG battle")
+    parser.add_argument("--hero-name", default="Knight Arthur", help="hero's display name")
+    parser.add_argument("--enemy", choices=("goblin", "orc", "spider"), default="goblin")
+    parser.add_argument("--seed", type=int, help="replay a battle with a fixed random seed")
+    args = parser.parse_args()
+    if not args.hero_name.strip():
+        parser.error("hero name cannot be empty")
+
+    enemies = {
+        "goblin": ("Goblin Berserker", 40, 12, 2),
+        "orc": ("Orc Guard", 70, 15, 4),
+        "spider": ("Cave Spider", 30, 10, 1),
+    }
+    hero = Character(args.hero_name, hp=100, attack=18, defense=5)
+    monster = Character(*enemies[args.enemy])
+    rng = random.Random(args.seed) if args.seed is not None else random
+    winner = battle(hero, monster, rng)
     print(f"🏆 Result: {winner}")
+
+
+if __name__ == "__main__":
+    main()
