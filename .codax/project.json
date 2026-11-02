@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "project_kind": "RPG de terminal Python",
+  "entry_points": [
+    "main.py",
+    "tests/test_main.py"
+  ],
+  "test_commands": [
+    "python -m unittest discover -s tests -v"
+  ],
+  "review_focus": [
+    "Dano e estados de combate",
+    "Aleatoriedade controlada nos testes"
+  ]
+}
