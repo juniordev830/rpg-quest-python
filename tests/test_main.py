@@ -13,6 +13,12 @@ class CharacterTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             Character("Hero", 10, -1, 0)
 
+    def test_constructor_rejects_non_integer_or_boolean_stats(self):
+        for args in ((10.5, 1, 0), (10, 1.5, 0), (10, 1, True), (True, 1, 0)):
+            with self.subTest(args=args):
+                with self.assertRaises(TypeError):
+                    Character("Hero", *args)
+
     def test_damage_is_at_least_one_and_health_never_goes_below_zero(self):
         hero = Character("Hero", 10, 1, 0)
 
@@ -21,6 +27,13 @@ class CharacterTests(unittest.TestCase):
         self.assertEqual(hero.take_damage(100), 9)
         self.assertEqual(hero.hp, 0)
         self.assertFalse(hero.is_alive())
+
+    def test_damage_rejects_non_integer_and_boolean_values(self):
+        hero = Character("Hero", 10, 1, 0)
+        for damage in (1.5, True):
+            with self.subTest(damage=damage):
+                with self.assertRaises(TypeError):
+                    hero.take_damage(damage)
 
     def test_battle_rejects_combatants_that_are_already_defeated(self):
         hero = Character("Hero", 10, 1, 0)
