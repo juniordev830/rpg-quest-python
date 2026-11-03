@@ -57,6 +57,22 @@ class CharacterTests(unittest.TestCase):
         self.assertTrue(hero.is_alive())
         self.assertFalse(monster.is_alive())
 
+    def test_battle_honors_custom_round_limit(self):
+        hero = Character("Hero", 100, 0, 100)
+        monster = Character("Monster", 100, 0, 100)
+
+        with patch("main.random.randint", return_value=1):
+            self.assertEqual(battle(hero, monster, max_rounds=2), "Draw")
+
+    def test_battle_rejects_invalid_round_limits(self):
+        hero = Character("Hero", 10, 1, 0)
+        monster = Character("Monster", 10, 1, 0)
+
+        with self.assertRaises(ValueError):
+            battle(hero, monster, max_rounds=0)
+        with self.assertRaises(TypeError):
+            battle(hero, monster, max_rounds=True)
+
     def test_battle_returns_draw_when_round_limit_is_reached(self):
         hero = Character("Hero", 100, 0, 100)
         monster = Character("Monster", 100, 0, 100)
