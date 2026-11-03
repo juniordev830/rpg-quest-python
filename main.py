@@ -37,8 +37,12 @@ class Character:
         return actual_dmg
 
 
-def battle(hero: Character, monster: Character, rng=None) -> str:
-    """Run up to ten combat rounds and return a winner or 'Draw'."""
+def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10) -> str:
+    """Run a bounded combat and return a winner or 'Draw'."""
+    if isinstance(max_rounds, bool) or not isinstance(max_rounds, int):
+        raise TypeError("max_rounds must be an integer.")
+    if max_rounds < 1 or max_rounds > 1000:
+        raise ValueError("max_rounds must be between 1 and 1000.")
     if not hero.is_alive() or not monster.is_alive():
         raise ValueError("Both combatants must be alive when a battle starts.")
 
@@ -46,7 +50,7 @@ def battle(hero: Character, monster: Character, rng=None) -> str:
     print(f"⚔️ Battle started: {hero.name} vs {monster.name}")
     rounds = 0
 
-    while hero.is_alive() and monster.is_alive() and rounds < 10:
+    while hero.is_alive() and monster.is_alive() and rounds < max_rounds:
         rounds += 1
         damage = hero.attack + rng.randint(1, 5)
         dealt = monster.take_damage(damage)
@@ -73,6 +77,7 @@ def main():
     parser.add_argument("--hero-name", default="Knight Arthur", help="hero's display name")
     parser.add_argument("--enemy", choices=("goblin", "orc", "spider"), default="goblin")
     parser.add_argument("--seed", type=int, help="replay a battle with a fixed random seed")
+    parser.add_argument("--rounds", type=int, default=10, help="maximum combat rounds (1-1000)")
     args = parser.parse_args()
     if not args.hero_name.strip():
         parser.error("hero name cannot be empty")
@@ -85,7 +90,7 @@ def main():
     hero = Character(args.hero_name, hp=100, attack=18, defense=5)
     monster = Character(*enemies[args.enemy])
     rng = random.Random(args.seed) if args.seed is not None else random
-    winner = battle(hero, monster, rng)
+    winner = battle(hero, monster, rng, max_rounds=args.rounds)
     print(f"🏆 Result: {winner}")
 
 
