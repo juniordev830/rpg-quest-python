@@ -22,6 +22,28 @@ class BattleCliTests(unittest.TestCase):
                 result = subprocess.run([sys.executable, str(SCRIPT), *args], capture_output=True, text=True)
                 self.assertEqual(result.returncode, 2)
 
+    def test_invalid_round_limits_show_usage_error_without_traceback(self):
+        for value in ("0", "-1", "1001"):
+            with self.subTest(rounds=value):
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--rounds", value],
+                    capture_output=True, text=True, timeout=10,
+                )
+                self.assertEqual(result.returncode, 2)
+                self.assertIn("rounds must be between 1 and 1000", result.stderr)
+                self.assertNotIn("Traceback", result.stderr)
+                self.assertEqual(result.stdout, "")
+
+    def test_one_round_is_accepted(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--rounds", "1", "--seed", "42"],
+            capture_output=True, text=True, timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Round 1:", result.stdout)
+        self.assertIn("Result:", result.stdout)
+
+
 
 if __name__ == "__main__":
     unittest.main()

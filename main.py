@@ -79,6 +79,8 @@ def main():
     parser.add_argument("--seed", type=int, help="replay a battle with a fixed random seed")
     parser.add_argument("--rounds", type=int, default=10, help="maximum combat rounds (1-1000)")
     args = parser.parse_args()
+    if not 1 <= args.rounds <= 1000:
+        parser.error("rounds must be between 1 and 1000")
     if not args.hero_name.strip():
         parser.error("hero name cannot be empty")
 

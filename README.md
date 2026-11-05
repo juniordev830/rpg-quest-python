@@ -30,6 +30,8 @@ python main.py --hero-name João --enemy orc --seed 42
 
 As opções de inimigo são `goblin`, `orc` e `spider`. Use a mesma semente para reproduzir a sequência de dano.
 
+O argumento `--rounds` aceita valores de 1 a 1000. Valores fora desse intervalo retornam uma mensagem de uso (código 2), sem traceback.
+
 ## Testes
 
 ```bash
