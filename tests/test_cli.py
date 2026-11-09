@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -15,6 +16,21 @@ class BattleCliTests(unittest.TestCase):
         self.assertEqual(first.stdout, second.stdout)
         self.assertIn("João vs Orc Guard", first.stdout)
         self.assertIn("Result:", first.stdout)
+
+    def test_json_output_is_machine_readable_and_replayable(self):
+        args = [sys.executable, str(SCRIPT), "--hero-name", "João", "--enemy", "orc",
+                "--seed", "42", "--format", "json"]
+        first = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
+        second = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        self.assertEqual(first.stdout, second.stdout)
+        result = json.loads(first.stdout)
+        self.assertIn(result["winner"], ("João", "Orc Guard", "Draw"))
+        self.assertEqual(result["hero"]["name"], "João")
+        self.assertEqual(result["enemy"]["name"], "Orc Guard")
+        self.assertLessEqual(result["hero"]["hp"], result["hero"]["max_hp"])
+        self.assertTrue(result["events"])
+        self.assertIn("Battle started", result["events"][0])
 
     def test_invalid_enemy_and_blank_name_are_rejected(self):
         for args in (["--enemy", "dragon"], ["--hero-name", "  "]):
