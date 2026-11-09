@@ -73,12 +73,22 @@ def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10, 
     return hero.name if hero.is_alive() else monster.name
 
 
+def valid_rounds(raw: str) -> int:
+    """Parse the CLI round limit before running a battle."""
+    try:
+        rounds = int(raw)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("rounds must be an integer from 1 to 1000") from exc
+    if not 1 <= rounds <= 1000:
+        raise argparse.ArgumentTypeError("rounds must be between 1 and 1000")
+    return rounds
+
 def main():
     parser = argparse.ArgumentParser(description="Simulate a turn-based RPG battle")
     parser.add_argument("--hero-name", default="Knight Arthur", help="hero's display name")
     parser.add_argument("--enemy", choices=("goblin", "orc", "spider"), default="goblin")
     parser.add_argument("--seed", type=int, help="replay a battle with a fixed random seed")
-    parser.add_argument("--rounds", type=int, default=10, help="maximum combat rounds (1-1000)")
+    parser.add_argument("--rounds", type=valid_rounds, default=10, help="maximum combat rounds (1-1000)")
     parser.add_argument("--format", choices=("text", "json"), default="text", help="battle output format")
     args = parser.parse_args()
     if not args.hero_name.strip():
