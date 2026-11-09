@@ -32,6 +32,27 @@ class BattleCliTests(unittest.TestCase):
         self.assertTrue(result["events"])
         self.assertIn("Battle started", result["events"][0])
 
+    def test_invalid_round_limits_are_cli_errors_without_traceback(self):
+        for value in ("0", "-1", "1001", "abc"):
+            for output_format in ("text", "json"):
+                with self.subTest(rounds=value, format=output_format):
+                    result = subprocess.run(
+                        [sys.executable, str(SCRIPT), "--rounds", value, "--format", output_format],
+                        capture_output=True, text=True, encoding="utf-8",
+                    )
+                    self.assertEqual(result.returncode, 2)
+                    self.assertIn("error:", result.stderr)
+                    self.assertIn("rounds", result.stderr)
+                    self.assertNotIn("Traceback", result.stderr)
+                    self.assertFalse(result.stdout)
+
+    def test_upper_round_limit_is_accepted(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--rounds", "1000", "--seed", "42", "--format", "json"],
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["max_rounds"], 1000)
     def test_invalid_enemy_and_blank_name_are_rejected(self):
         for args in (["--enemy", "dragon"], ["--hero-name", "  "]):
             with self.subTest(args=args):
