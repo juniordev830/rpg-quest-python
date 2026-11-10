@@ -1,4 +1,5 @@
 import argparse
+import json
 import random
 
 
@@ -37,7 +38,7 @@ class Character:
         return actual_dmg
 
 
-def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10) -> str:
+def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10, emit=print) -> str:
     """Run a bounded combat and return a winner or 'Draw'."""
     if isinstance(max_rounds, bool) or not isinstance(max_rounds, int):
         raise TypeError("max_rounds must be an integer.")
@@ -47,14 +48,14 @@ def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10) 
         raise ValueError("Both combatants must be alive when a battle starts.")
 
     rng = random if rng is None else rng
-    print(f"⚔️ Battle started: {hero.name} vs {monster.name}")
+    emit(f"⚔️ Battle started: {hero.name} vs {monster.name}")
     rounds = 0
 
     while hero.is_alive() and monster.is_alive() and rounds < max_rounds:
         rounds += 1
         damage = hero.attack + rng.randint(1, 5)
         dealt = monster.take_damage(damage)
-        print(
+        emit(
             f"Round {rounds}: {hero.name} deals {dealt} damage to "
             f"{monster.name} (Monster HP: {monster.hp})"
         )
@@ -62,7 +63,7 @@ def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10) 
         if monster.is_alive():
             monster_damage = monster.attack + rng.randint(1, 3)
             received = hero.take_damage(monster_damage)
-            print(
+            emit(
                 f"Round {rounds}: {monster.name} deals {received} damage to "
                 f"{hero.name} (Hero HP: {hero.hp})"
             )
@@ -72,12 +73,23 @@ def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10) 
     return hero.name if hero.is_alive() else monster.name
 
 
+def valid_rounds(raw: str) -> int:
+    """Parse the CLI round limit before running a battle."""
+    try:
+        rounds = int(raw)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("rounds must be an integer from 1 to 1000") from exc
+    if not 1 <= rounds <= 1000:
+        raise argparse.ArgumentTypeError("rounds must be between 1 and 1000")
+    return rounds
+
 def main():
     parser = argparse.ArgumentParser(description="Simulate a turn-based RPG battle")
     parser.add_argument("--hero-name", default="Knight Arthur", help="hero's display name")
     parser.add_argument("--enemy", choices=("goblin", "orc", "spider"), default="goblin")
     parser.add_argument("--seed", type=int, help="replay a battle with a fixed random seed")
-    parser.add_argument("--rounds", type=int, default=10, help="maximum combat rounds (1-1000)")
+    parser.add_argument("--rounds", type=valid_rounds, default=10, help="maximum combat rounds (1-1000)")
+    parser.add_argument("--format", choices=("text", "json"), default="text", help="battle output format")
     args = parser.parse_args()
     if not args.hero_name.strip():
         parser.error("hero name cannot be empty")
@@ -90,8 +102,19 @@ def main():
     hero = Character(args.hero_name, hp=100, attack=18, defense=5)
     monster = Character(*enemies[args.enemy])
     rng = random.Random(args.seed) if args.seed is not None else random
-    winner = battle(hero, monster, rng, max_rounds=args.rounds)
-    print(f"🏆 Result: {winner}")
+    if args.format == "json":
+        events = []
+        winner = battle(hero, monster, rng, max_rounds=args.rounds, emit=events.append)
+        print(json.dumps({
+            "winner": winner,
+            "hero": {"name": hero.name, "hp": hero.hp, "max_hp": hero.max_hp},
+            "enemy": {"name": monster.name, "hp": monster.hp, "max_hp": monster.max_hp},
+            "max_rounds": args.rounds,
+            "events": events,
+        }, ensure_ascii=False))
+    else:
+        winner = battle(hero, monster, rng, max_rounds=args.rounds)
+        print(f"🏆 Result: {winner}")
 
 
 if __name__ == "__main__":

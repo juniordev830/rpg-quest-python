@@ -12,6 +12,7 @@ Protótipo de combate por turnos em Python, criado para praticar orientação a 
 - Exibição do combate e do resultado no terminal.
 - Escolha do nome do herói e de um entre três inimigos pela linha de comando.
 - Semente opcional para reproduzir uma batalha com os mesmos valores aleatórios.
+- Exportação opcional de resultado JSON para integrar outras interfaces.
 - Testes automatizados para atributos, dano, vitória, combate inválido e empate por limite de rodadas.
 
 O README descreve somente o comportamento implementado em `main.py`; inventário, equipamentos e progressão de experiência ainda não fazem parte do protótipo.
@@ -26,9 +27,12 @@ O README descreve somente o comportamento implementado em `main.py`; inventário
 ```bash
 python main.py
 python main.py --hero-name João --enemy orc --seed 42
+python main.py --hero-name João --enemy orc --seed 42 --format json
 ```
 
-As opções de inimigo são `goblin`, `orc` e `spider`. Use a mesma semente para reproduzir a sequência de dano.
+Com `--format json`, a saída é um objeto JSON válido contendo `winner`, estado final de `hero` e `enemy` (nome, vida atual e máxima), `max_rounds` e `events` (mensagens do combate). O padrão continua sendo `--format text`, compatível com a saída antiga. Com a mesma `--seed`, a simulação gera resultados reproduzíveis, úteis para integrar uma interface web ou testar a lógica.
+
+As opções de inimigo são `goblin`, `orc` e `spider`. Use a mesma semente para reproduzir a sequência de dano. O argumento `--rounds` aceita somente inteiros de **1 a 1000**; entradas inválidas exibem uma mensagem de uso e saem com código 2, sem traceback, tanto em texto quanto em JSON.
 
 ## Testes
 
