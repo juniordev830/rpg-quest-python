@@ -59,3 +59,7 @@ python -m unittest discover -s tests -v
 ## Objetivo de aprendizagem
 
 O projeto é um exercício incremental de Python. A prioridade é manter regras simples, testar os casos extremos e documentar cada funcionalidade conforme for implementada.
+
+## Validação e manutenção
+
+Consulte o [guia técnico de validação](docs/GUIA_DE_VALIDACAO.md) antes de alterar o código: ele reúne os comandos, casos de regressão e limites atuais do projeto.
