@@ -111,7 +111,7 @@ def main():
             "enemy": {"name": monster.name, "hp": monster.hp, "max_hp": monster.max_hp},
             "max_rounds": args.rounds,
             "events": events,
-        }, ensure_ascii=False))
+        }, ensure_ascii=True))
     else:
         winner = battle(hero, monster, rng, max_rounds=args.rounds)
         print(f"🏆 Result: {winner}")

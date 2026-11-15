@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -31,6 +32,17 @@ class BattleCliTests(unittest.TestCase):
         self.assertLessEqual(result["hero"]["hp"], result["hero"]["max_hp"])
         self.assertTrue(result["events"])
         self.assertIn("Battle started", result["events"][0])
+
+    def test_json_output_survives_a_legacy_stdout_encoding(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--hero-name", "João", "--seed", "42", "--format", "json"],
+            capture_output=True, env={**os.environ, "PYTHONIOENCODING": "cp1252"},
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr.decode("cp1252"))
+        output = json.loads(result.stdout.decode("ascii"))
+        self.assertEqual(output["hero"]["name"], "João")
+        self.assertTrue(output["events"][0].startswith("⚔️"))
 
     def test_invalid_round_limits_are_cli_errors_without_traceback(self):
         for value in ("0", "-1", "1001", "abc"):
