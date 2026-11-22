@@ -52,6 +52,8 @@ def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10, 
         raise TypeError("max_rounds must be an integer.")
     if max_rounds < 1 or max_rounds > 1000:
         raise ValueError("max_rounds must be between 1 and 1000.")
+    if hero is monster:
+        raise ValueError("Combatants must be distinct characters.")
     if not hero.is_alive() or not monster.is_alive():
         raise ValueError("Both combatants must be alive when a battle starts.")
 
