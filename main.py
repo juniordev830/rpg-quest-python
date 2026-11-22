@@ -27,10 +27,10 @@ class Character:
         for attribute, value in (("hp", hp), ("attack", attack), ("defense", defense)):
             if isinstance(value, bool) or not isinstance(value, int):
                 raise TypeError(f"{attribute} must be an integer.")
-        if hp <= 0:
-            raise ValueError("Maximum health must be greater than zero.")
-        if attack < 0 or defense < 0:
-            raise ValueError("Attack and defense cannot be negative.")
+        if hp <= 0 or hp > 1_000_000_000:
+            raise ValueError("Maximum health must be between 1 and 1000000000.")
+        if not (0 <= attack <= 1_000_000_000 and 0 <= defense <= 1_000_000_000):
+            raise ValueError("Attack and defense must be between 0 and 1000000000.")
 
         self.name = name.strip()
         self.max_hp = hp
