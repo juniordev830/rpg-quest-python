@@ -3,12 +3,20 @@ import json
 import random
 
 
+def validated_name(value: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("Character name cannot be empty.")
+    name = value.strip()
+    if len(name) > 80 or any(ord(char) < 32 or ord(char) == 127 for char in name):
+        raise ValueError("Character name must be at most 80 visible characters.")
+    return name
+
+
 class Character:
     """A combatant with bounded health and basic combat attributes."""
 
     def __init__(self, name: str, hp: int, attack: int, defense: int):
-        if not isinstance(name, str) or not name.strip():
-            raise ValueError("Character name cannot be empty.")
+        name = validated_name(name)
         for attribute, value in (("hp", hp), ("attack", attack), ("defense", defense)):
             if isinstance(value, bool) or not isinstance(value, int):
                 raise TypeError(f"{attribute} must be an integer.")
@@ -91,15 +99,17 @@ def main():
     parser.add_argument("--rounds", type=valid_rounds, default=10, help="maximum combat rounds (1-1000)")
     parser.add_argument("--format", choices=("text", "json"), default="text", help="battle output format")
     args = parser.parse_args()
-    if not args.hero_name.strip():
-        parser.error("hero name cannot be empty")
+    try:
+        hero_name = validated_name(args.hero_name)
+    except ValueError as error:
+        parser.error(str(error))
 
     enemies = {
         "goblin": ("Goblin Berserker", 40, 12, 2),
         "orc": ("Orc Guard", 70, 15, 4),
         "spider": ("Cave Spider", 30, 10, 1),
     }
-    hero = Character(args.hero_name, hp=100, attack=18, defense=5)
+    hero = Character(hero_name, hp=100, attack=18, defense=5)
     monster = Character(*enemies[args.enemy])
     rng = random.Random(args.seed) if args.seed is not None else random
     if args.format == "json":
