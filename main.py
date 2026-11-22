@@ -1,13 +1,20 @@
 import argparse
 import json
 import random
+import unicodedata
 
 
 def validated_name(value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError("Character name cannot be empty.")
     name = value.strip()
-    if len(name) > 80 or any(ord(char) < 32 or ord(char) == 127 for char in name):
+    if len(name) > 80 or any(
+        ord(char) < 32 or ord(char) == 127
+        or unicodedata.bidirectional(char) in {
+            "LRE", "RLE", "LRO", "RLO", "PDF", "LRI", "RLI", "FSI", "PDI"
+        }
+        for char in name
+    ):
         raise ValueError("Character name must be at most 80 visible characters.")
     return name
 
