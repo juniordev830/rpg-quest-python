@@ -1,13 +1,20 @@
 import argparse
 import json
 import random
+import unicodedata
 
 
 def validated_name(value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError("Character name cannot be empty.")
     name = value.strip()
-    if len(name) > 80 or any(ord(char) < 32 or ord(char) == 127 for char in name):
+    if len(name) > 80 or any(
+        ord(char) < 32 or ord(char) == 127
+        or unicodedata.bidirectional(char) in {
+            "LRE", "RLE", "LRO", "RLO", "PDF", "LRI", "RLI", "FSI", "PDI"
+        }
+        for char in name
+    ):
         raise ValueError("Character name must be at most 80 visible characters.")
     return name
 
@@ -20,10 +27,10 @@ class Character:
         for attribute, value in (("hp", hp), ("attack", attack), ("defense", defense)):
             if isinstance(value, bool) or not isinstance(value, int):
                 raise TypeError(f"{attribute} must be an integer.")
-        if hp <= 0:
-            raise ValueError("Maximum health must be greater than zero.")
-        if attack < 0 or defense < 0:
-            raise ValueError("Attack and defense cannot be negative.")
+        if hp <= 0 or hp > 1_000_000_000:
+            raise ValueError("Maximum health must be between 1 and 1000000000.")
+        if not (0 <= attack <= 1_000_000_000 and 0 <= defense <= 1_000_000_000):
+            raise ValueError("Attack and defense must be between 0 and 1000000000.")
 
         self.name = name.strip()
         self.max_hp = hp
@@ -52,6 +59,8 @@ def battle(hero: Character, monster: Character, rng=None, max_rounds: int = 10, 
         raise TypeError("max_rounds must be an integer.")
     if max_rounds < 1 or max_rounds > 1000:
         raise ValueError("max_rounds must be between 1 and 1000.")
+    if hero is monster:
+        raise ValueError("Combatants must be distinct characters.")
     if not hero.is_alive() or not monster.is_alive():
         raise ValueError("Both combatants must be alive when a battle starts.")
 
